@@ -17,6 +17,14 @@ table with **every interface metric**:
 Metrics come from vendored [AFM-LIS](https://github.com/flyark/AFM-LIS) `lis.py`
 (parallel `-w`) plus a PEAK pass, aggregated to mean+max over the diffusion models.
 
+> **What this is.** `boltzlis` is a thin **orchestration wrapper** — built by
+> **Ranjith Papareddy** — that runs **Boltz-2** for structure prediction and computes
+> *published* interface-confidence metrics (**LIS / iLIS**, **actifpTM**, **ipSAE**, **PEAK**).
+> The modelling and the metrics are other people's science; boltzlis just automates the
+> boring part end-to-end — IDs → sequences → folds → all metrics → one ranked table, across a
+> cluster. **If you use it, please cite the underlying methods** (see
+> [Credits & citation](#credits--citation)).
+
 ---
 
 ## Step-by-step guide (local + Helix / bwForCluster)
@@ -135,3 +143,34 @@ tests/                 local unit tests (no cluster/GPU needed)
 - iLIS 0.223 is AF-Multimer/Y2H-calibrated — treat as approximate on Boltz.
 - `collect.py` ingests Boltz output dirs (`<pair>/boltz_results_*/predictions/...`)
   as-is via lis.py's native Boltz adapter.
+
+## Credits & citation
+
+`boltzlis` (this wrapper) is by **Ranjith Papareddy**, MIT-licensed. It does **not** introduce
+a new method — it orchestrates and scores the tools below. **If `boltzlis` is useful in your
+work, cite the underlying methods** (and a link to this repo is appreciated):
+
+| component | what it does here | cite |
+|---|---|---|
+| **Boltz-2** | structure prediction (the folds) | Passaro *et al.* 2025, bioRxiv [10.1101/2025.06.14.659707](https://doi.org/10.1101/2025.06.14.659707); Boltz-1: Wohlwend *et al.* 2024 [10.1101/2024.11.19.624167](https://doi.org/10.1101/2024.11.19.624167) |
+| **iLIS / LIS / cLIS / LIA** | local interaction scores (vendored `lis.py`) | iLIS: Kim *et al.* 2026 [10.64898/2026.04.14.718529](https://doi.org/10.64898/2026.04.14.718529); LIS+LIA: Kim *et al.* 2024, bioRxiv [10.1101/2024.02.19.580970](https://doi.org/10.1101/2024.02.19.580970) — repo: [flyark/AFM-LIS](https://github.com/flyark/AFM-LIS) |
+| **actifpTM** | interface-restricted ipTM | Varga, Ovchinnikov & Schueler-Furman 2025, *Bioinformatics* [10.1093/bioinformatics/btaf107](https://doi.org/10.1093/bioinformatics/btaf107) |
+| **ipSAE** | aligned-error interface score | Dunbrack 2025, bioRxiv [10.1101/2025.02.10.637595](https://doi.org/10.1101/2025.02.10.637595) |
+| **ipTM / pTM** | native confidence (AlphaFold-Multimer metric, reported by Boltz) | Evans *et al.* 2021 [10.1101/2021.10.04.463034](https://doi.org/10.1101/2021.10.04.463034) |
+
+`PEAK` ( = 1 − min-interchain-PAE/30 ) is a convenience scalar defined in this repo; no separate citation.
+
+<details><summary>BibTeX</summary>
+
+> DOIs and author-years are verified from source. The two Kim *et al.* (LIS/iLIS) **titles**
+> below are abbreviated — confirm the exact title/author list at each DOI before citing.
+
+```bibtex
+@article{passaro2025boltz2, title={Boltz-2: Towards Accurate and Efficient Binding Affinity Prediction}, author={Passaro, Saro and Corso, Gabriele and Wohlwend, Jeremy and others}, journal={bioRxiv}, year={2025}, doi={10.1101/2025.06.14.659707}}
+@article{wohlwend2024boltz1, title={Boltz-1: Democratizing Biomolecular Interaction Modeling}, author={Wohlwend, Jeremy and Corso, Gabriele and Passaro, Saro and others}, journal={bioRxiv}, year={2024}, doi={10.1101/2024.11.19.624167}}
+@article{kim2026ilis, title={Integrated Local Interaction Score (iLIS)}, author={Kim, Ah-Ram and others}, year={2026}, doi={10.64898/2026.04.14.718529}}
+@article{kim2024lis, title={Enhancing Protein-Protein Interaction Prediction with Local Interaction Score from AlphaFold-Multimer}, author={Kim, Ah-Ram and others}, journal={bioRxiv}, year={2024}, doi={10.1101/2024.02.19.580970}}
+@article{varga2025actifptm, title={actifpTM: a refined confidence metric of AlphaFold2 predictions involving flexible regions}, author={Varga, Julia K. and Ovchinnikov, Sergey and Schueler-Furman, Ora}, journal={Bioinformatics}, year={2025}, doi={10.1093/bioinformatics/btaf107}}
+@article{dunbrack2025ipsae, title={Res ipSAE loquunt: What's wrong with AlphaFold's ipTM score and how to fix it}, author={Dunbrack, Roland L.}, journal={bioRxiv}, year={2025}, doi={10.1101/2025.02.10.637595}}
+```
+</details>

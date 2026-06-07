@@ -1,0 +1,6 @@
+numpy>=1.23
+scipy>=1.9
+pandas>=1.5
+matplotlib>=3.6
+# stdlib urllib is used for UniProt fetch (no 'requests' dependency)
+# Boltz-2 itself is installed separately in the cluster GPU env (not a pip dep here).

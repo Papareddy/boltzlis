@@ -1,0 +1,14 @@
+# runs, caches, outputs
+runs/
+seq_cache/
+*.permodel.csv
+__pycache__/
+*.pyc
+.DS_Store
+config.yaml          # local cluster config (copy from config.example.yaml)
+# large prediction outputs / structures
+out/
+*.npz
+*.cif
+*.pdb
+!tests/data/*.pdb     # keep tiny test fixtures

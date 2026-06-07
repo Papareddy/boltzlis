@@ -1,0 +1,16 @@
+# Copy to config.yaml (gitignored) and edit for your cluster. Simple key: value.
+# Boltz environment + model cache on the cluster
+env: /path/to/boltz-env
+cache: /path/to/boltz-cache
+# python with numpy+scipy+pandas (for lis.py / collect); your cluster analysis env
+python: /path/to/conda/envs/analysis/bin/python
+# SLURM resources for each Boltz fold (GPU)
+partition: gpu-single
+gpumem: 80G
+time: 12:00:00
+mem: 120g
+cpus: 12
+# Extra flags passed to `boltz predict`. MSA is REQUIRED:
+#   --use_msa_server  = auto-generate via the ColabFold server (needs internet on the run node)
+#   (omit, and instead add an `msa:` path in each YAML) = use precomputed MSAs (offline clusters)
+boltz_extra: --use_msa_server --no_kernels --override

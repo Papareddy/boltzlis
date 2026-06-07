@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH -J {JOBNAME}
+#SBATCH -p {PARTITION}
+#SBATCH --gres=gpu:1,gpumem_per_gpu:{GPUMEM}
+#SBATCH --time={TIME}
+#SBATCH --mem={MEM}
+#SBATCH --cpus-per-task={CPUS}
+#SBATCH -o {OUTDIR}/logs/%A_%a.out
+#SBATCH -e {OUTDIR}/logs/%A_%a.out
+# Boltz-2 array: one diffusion-sampled fold per YAML in the list.
+# Submit with:  sbatch --array=1-{NJOBS} submit.sbatch
+set -uo pipefail
+mkdir -p {OUTDIR}/logs
+ENV={ENV}
+CACHE={CACHE}
+Y=$(sed -n "${{SLURM_ARRAY_TASK_ID}}p" {LISTFILE})
+name=$(basename "$Y" .yaml)
+OUT={OUTDIR}/out/$name
+mkdir -p "$OUT"
+echo "NODE=$(hostname) TASK=$SLURM_ARRAY_TASK_ID YAML=$Y"
+$ENV/bin/boltz predict "$Y" --cache $CACHE --out_dir "$OUT" \
+    --output_format {OUTFMT} --diffusion_samples {DIFFUSION} {BOLTZ_EXTRA}
+echo "BOLTZ_EXIT=$? name=$name"
